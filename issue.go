@@ -5,10 +5,22 @@ import (
 	"time"
 )
 
+type IssueStatus bool
+
+const (
+	ISSUE_OPENED IssueStatus = true
+	ISSUE_CLOSED             = false
+)
+
 type Issue struct {
-	Id       uint      `json:"id"`
-	Title    string    `json:"title"`
-	Comments []Comment `json:"comments"`
+	Id       uint        `json:"id"`
+	Title    string      `json:"title"`
+	Comments []Comment   `json:"comments"`
+	Status   IssueStatus `json:"status"`
+}
+
+func (i *Issue) Close() {
+	i.Status = ISSUE_CLOSED
 }
 
 func (i *Issue) Comment(comment string) {
@@ -26,5 +38,6 @@ func NewIssue(id uint, title string, comments []Comment) *Issue {
 		Id:       id,
 		Title:    title,
 		Comments: comments,
+		Status:   ISSUE_OPENED,
 	}
 }

@@ -12,7 +12,7 @@ type Store struct {
 	Issues []*Issue `json:"issues"`
 	Path   string   `json:"-"`
 
-	nextId uint `json:"nextid"`
+	NextId uint `json:"nextid"`
 }
 
 func CreateNewStore(storePath string) (*Store, error) {
@@ -88,6 +88,18 @@ func (s *Store) ListIssues() []*Issue {
 	return s.Issues
 }
 
+func (s *Store) FilterIssues(status IssueStatus) []*Issue {
+	var issues []*Issue
+
+	for _, issue := range s.Issues {
+		if issue.Status == status {
+			issues = append(issues, issue)
+		}
+	}
+
+	return issues
+}
+
 func (s *Store) Write() error {
 	jsonData, err := json.Marshal(s)
 	if err != nil {
@@ -103,8 +115,8 @@ func (s *Store) Write() error {
 }
 
 func (s *Store) getNextId() uint {
-	nextId := s.nextId
-	s.nextId += 1
+	nextId := s.NextId
+	s.NextId += 1
 	return nextId
 }
 
@@ -112,6 +124,6 @@ func NewStore(path string, issues []*Issue) *Store {
 	return &Store{
 		Issues: issues,
 		Path:   path,
-		nextId: 0,
+		NextId: 0,
 	}
 }

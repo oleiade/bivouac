@@ -17,6 +17,13 @@ func ListIssuesCommand() cli.Command {
 		Name:    "list",
 		Aliases: []string{"l"},
 		Usage:   "list issues",
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:  "status",
+				Value: "",
+				Usage: "filter issues shown based on their status open/closed",
+			},
+		},
 		Action: func(c *cli.Context) {
 			store, err := GetOrCreateStore(".groundcontrol")
 			if err != nil {
@@ -26,9 +33,45 @@ func ListIssuesCommand() cli.Command {
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
-			fmt.Fprintln(w, "id\ttitle\tcoms\tbody")
-			for _, issue := range store.ListIssues() {
-				fmt.Fprintf(w, "#%d\t%s\t%d\t%s\n", issue.Id, issue.Title, len(issue.Comments)-1, issue.Comments[0].Body)
+			fmt.Fprintln(w, "id\tstatus\ttitle\tcoms\tbody")
+
+			if c.String("status") != "" {
+				issueStatus := ISSUE_OPENED
+				if c.String("status") == "closed" {
+					issueStatus = ISSUE_CLOSED
+				}
+
+				for _, issue := range store.FilterIssues(issueStatus) {
+					issueStatusString := "︎!"
+					if issue.Status == ISSUE_CLOSED {
+						issueStatusString = "✓"
+					}
+
+					fmt.Fprintf(
+						w, "#%d\t%s\t%s\t%d\t%s\n",
+						issue.Id,
+						issueStatusString,
+						issue.Title,
+						len(issue.Comments)-1,
+						issue.Comments[0].Body,
+					)
+				}
+			} else {
+				for _, issue := range store.ListIssues() {
+					issueStatusString := "︎!"
+					if issue.Status == ISSUE_CLOSED {
+						issueStatusString = "✓"
+					}
+
+					fmt.Fprintf(
+						w, "#%d\t%s\t%s\t%d\t%s\n",
+						issue.Id,
+						issueStatusString,
+						issue.Title,
+						len(issue.Comments)-1,
+						issue.Comments[0].Body,
+					)
+				}
 			}
 			w.Flush()
 		},
@@ -62,8 +105,14 @@ func ShowIssueCommand() cli.Command {
 				log.Fatal(err)
 			}
 
-			fmt.Printf("#%d %s\n", issue.Id, issue.Title)
-			fmt.Printf("---\n")
+			issueStatus := "!"
+			if issue.Status == ISSUE_CLOSED {
+				issueStatus = "✓"
+			}
+
+			fmt.Printf("%s %s\n", issueStatus, issue.Title)
+			fmt.Printf("#%d opened on %s\n", issue.Id, issue.Comments[0].CreatedAt)
+			fmt.Printf("-----\n")
 			fmt.Printf("%s\n\n", issue.Comments[0].Body)
 
 			for _, comment := range issue.Comments[1:] {
@@ -141,6 +190,10 @@ func CommentIssueCommand() cli.Command {
 				Name:  "comment",
 				Usage: "leave a comment",
 			},
+			cli.BoolFlag{
+				Name:  "close",
+				Usage: "comment and close the issue",
+			},
 		},
 		Action: func(c *cli.Context) {
 			var reader *bufio.Reader
@@ -180,6 +233,11 @@ func CommentIssueCommand() cli.Command {
 			}
 
 			issue.Comment(comment)
+
+			if c.Bool("close") {
+				issue.Close()
+			}
+
 			store.Write()
 		},
 	}
