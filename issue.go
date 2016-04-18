@@ -25,7 +25,7 @@ func (i *Issue) Close() {
 
 func (i *Issue) Comment(comment string) {
 	c := NewComment(
-		time.Now().String(),
+		time.Now(),
 		comment,
 	)
 

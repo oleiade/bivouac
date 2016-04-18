@@ -33,7 +33,7 @@ func ListIssuesCommand() cli.Command {
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
-			fmt.Fprintln(w, "id\tstatus\ttitle\tcoms\tbody")
+			fmt.Fprintln(w, "status\tid\ttitle\topened on\tcomments")
 
 			if c.String("status") != "" {
 				issueStatus := ISSUE_OPENED
@@ -48,12 +48,12 @@ func ListIssuesCommand() cli.Command {
 					}
 
 					fmt.Fprintf(
-						w, "#%d\t%s\t%s\t%d\t%s\n",
-						issue.Id,
+						w, "%s\t#%d\t%s\t%s\t%d\n",
 						issueStatusString,
+						issue.Id,
 						issue.Title,
+						issue.Comments[0].CreatedAt.Format("Jan 2 2006"),
 						len(issue.Comments)-1,
-						issue.Comments[0].Body,
 					)
 				}
 			} else {
@@ -64,12 +64,12 @@ func ListIssuesCommand() cli.Command {
 					}
 
 					fmt.Fprintf(
-						w, "#%d\t%s\t%s\t%d\t%s\n",
-						issue.Id,
+						w, "%s\t#%d\t%s\t%s\t%d\n",
 						issueStatusString,
+						issue.Id,
 						issue.Title,
+						issue.Comments[0].CreatedAt.Format("Jan 2 2006"),
 						len(issue.Comments)-1,
-						issue.Comments[0].Body,
 					)
 				}
 			}
@@ -111,7 +111,7 @@ func ShowIssueCommand() cli.Command {
 			}
 
 			fmt.Printf("%s %s\n", issueStatus, issue.Title)
-			fmt.Printf("#%d opened on %s\n", issue.Id, issue.Comments[0].CreatedAt)
+			fmt.Printf("#%d opened on %s\n", issue.Id, issue.Comments[0].CreatedAt.Format("Jan 2 2006 15:04"))
 			fmt.Printf("-----\n")
 			fmt.Printf("%s\n\n", issue.Comments[0].Body)
 
@@ -171,7 +171,7 @@ func CreateIssueCommand() cli.Command {
 				store.getNextId(),
 				title,
 				[]Comment{
-					*NewComment(time.Now().String(), comment),
+					*NewComment(time.Now(), comment),
 				},
 			)
 			store.AddIssue(*issue)
