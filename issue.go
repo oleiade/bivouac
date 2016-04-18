@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"time"
-)
+import "time"
 
 type IssueStatus bool
 
@@ -30,7 +27,6 @@ func (i *Issue) Comment(comment string) {
 	)
 
 	i.Comments = append(i.Comments, *c)
-	fmt.Println(len(i.Comments))
 }
 
 func NewIssue(id uint, title string, comments []Comment) *Issue {
