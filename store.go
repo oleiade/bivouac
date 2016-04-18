@@ -85,7 +85,13 @@ func (s *Store) GetIssue(id uint) (*Issue, error) {
 }
 
 func (s *Store) ListIssues() []*Issue {
-	return s.Issues
+	var issues []*Issue
+
+	for i := len(s.Issues) - 1; i >= 0; i-- {
+		issues = append(issues, s.Issues[i])
+	}
+
+	return issues
 }
 
 func (s *Store) FilterIssues(status IssueStatus) []*Issue {
