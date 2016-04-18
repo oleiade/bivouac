@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 	"text/tabwriter"
-	"time"
 
 	"github.com/codegangsta/cli"
 )
@@ -52,8 +51,8 @@ func ListIssuesCommand() cli.Command {
 						issueStatusString,
 						issue.Id,
 						issue.Title,
-						issue.Comments[0].CreatedAt.Format("Jan 2 2006"),
-						len(issue.Comments)-1,
+						issue.CreatedAt.Format("Jan 2 2006"),
+						len(issue.Comments),
 					)
 				}
 			} else {
@@ -68,8 +67,8 @@ func ListIssuesCommand() cli.Command {
 						issueStatusString,
 						issue.Id,
 						issue.Title,
-						issue.Comments[0].CreatedAt.Format("Jan 2 2006"),
-						len(issue.Comments)-1,
+						issue.CreatedAt.Format("Jan 2 2006"),
+						len(issue.Comments),
 					)
 				}
 			}
@@ -111,11 +110,11 @@ func ShowIssueCommand() cli.Command {
 			}
 
 			fmt.Printf("%s %s\n", issueStatus, issue.Title)
-			fmt.Printf("#%d opened on %s\n", issue.Id, issue.Comments[0].CreatedAt.Format("Jan 2 2006 15:04"))
+			fmt.Printf("#%d opened on %s\n", issue.Id, issue.CreatedAt.Format("Jan 2 2006 15:04"))
 			fmt.Printf("-----\n")
-			fmt.Printf("%s\n\n", issue.Comments[0].Body)
+			fmt.Printf("%s\n\n", issue.Description)
 
-			for _, comment := range issue.Comments[1:] {
+			for _, comment := range issue.Comments {
 				fmt.Printf("|\n\n")
 				fmt.Printf("Commented on %s\n-----\n%s\n\n", comment.CreatedAt.Format("Jan 2 2006 15:04"), comment.Body)
 			}
@@ -134,14 +133,14 @@ func CreateIssueCommand() cli.Command {
 				Usage: "set the issue tile",
 			},
 			cli.StringFlag{
-				Name:  "comment",
-				Usage: "leave a comment",
+				Name:  "description",
+				Usage: "describe the issue",
 			},
 		},
 		Action: func(c *cli.Context) {
 			var reader *bufio.Reader
 			var title string
-			var comment string
+			var description string
 			var err error
 
 			store, err := GetOrCreateStore(".groundcontrol")
@@ -149,7 +148,7 @@ func CreateIssueCommand() cli.Command {
 				log.Fatal(err)
 			}
 
-			if c.String("title") == "" && c.String("comment") == "" {
+			if c.String("title") == "" && c.String("description") == "" {
 				reader = bufio.NewReader(os.Stdin)
 				fmt.Print("Title: ")
 				title, err = reader.ReadString('\n')
@@ -157,22 +156,20 @@ func CreateIssueCommand() cli.Command {
 					log.Fatal(err)
 				}
 
-				fmt.Print("Comment: ")
-				comment, err = reader.ReadString('\n')
+				fmt.Print("Description: ")
+				description, err = reader.ReadString('\n')
 				if err != nil {
 					log.Fatal(err)
 				}
 			} else {
 				title = c.String("title")
-				comment = c.String("comment")
+				description = c.String("description")
 			}
 
 			issue := NewIssue(
 				store.getNextId(),
 				title,
-				[]Comment{
-					*NewComment(time.Now(), comment),
-				},
+				description,
 			)
 			store.AddIssue(*issue)
 			store.Write()

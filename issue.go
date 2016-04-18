@@ -10,14 +10,18 @@ const (
 )
 
 type Issue struct {
-	Id       uint        `json:"id"`
-	Title    string      `json:"title"`
-	Comments []Comment   `json:"comments"`
-	Status   IssueStatus `json:"status"`
+	Id          uint        `json:"id"`
+	Title       string      `json:"title"`
+	Description string      `json:"description"`
+	CreatedAt   time.Time   `json:"created_at"`
+	ClosedAt    time.Time   `json:"closed_at"`
+	Comments    []Comment   `json:"comments"`
+	Status      IssueStatus `json:"status"`
 }
 
 func (i *Issue) Close() {
 	i.Status = ISSUE_CLOSED
+	i.ClosedAt = time.Now()
 }
 
 func (i *Issue) Comment(comment string) {
@@ -29,11 +33,12 @@ func (i *Issue) Comment(comment string) {
 	i.Comments = append(i.Comments, *c)
 }
 
-func NewIssue(id uint, title string, comments []Comment) *Issue {
+func NewIssue(id uint, title, description string) *Issue {
 	return &Issue{
-		Id:       id,
-		Title:    title,
-		Comments: comments,
-		Status:   ISSUE_OPENED,
+		Id:          id,
+		Title:       title,
+		Description: description,
+		CreatedAt:   time.Now(),
+		Status:      ISSUE_OPENED,
 	}
 }
