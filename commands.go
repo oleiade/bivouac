@@ -242,3 +242,48 @@ func CommentIssueCommand() cli.Command {
 		},
 	}
 }
+
+func CloseIssueCommand() cli.Command {
+	return cli.Command{
+		Name:    "close",
+		Aliases: []string{},
+		Usage:   "close an issue",
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:  "comment",
+				Value: "",
+				Usage: "close with a comment",
+			},
+		},
+		Action: func(c *cli.Context) {
+			var issue *Issue
+			var err error
+
+			if len(c.Args()) == 0 {
+				log.Fatal("Please provide the issue to close")
+			}
+
+			store, err := GetOrCreateStore(".groundcontrol")
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			id, err := strconv.Atoi(c.Args()[0][1:])
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			issue, err = store.GetIssue(uint(id))
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if c.String("comment") != "" {
+				issue.Comment(c.String("comment"))
+			}
+
+			issue.Close()
+			store.Write()
+		},
+	}
+}

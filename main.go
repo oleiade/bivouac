@@ -15,6 +15,7 @@ func main() {
 		ListIssuesCommand(),
 		CommentIssueCommand(),
 		ShowIssueCommand(),
+		CloseIssueCommand(),
 	}
 
 	app.Action = func(c *cli.Context) {
