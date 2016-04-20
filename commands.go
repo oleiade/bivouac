@@ -94,7 +94,7 @@ func ShowIssueCommand() cli.Command {
 				log.Fatal(err)
 			}
 
-			id, err := strconv.Atoi(c.Args()[0][1:])
+			id, err := strconv.Atoi(c.Args()[0])
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -219,7 +219,7 @@ func CommentIssueCommand() cli.Command {
 				comment = c.String("comment")
 			}
 
-			id, err := strconv.Atoi(c.Args()[0][1:])
+			id, err := strconv.Atoi(c.Args()[0])
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -265,7 +265,7 @@ func CloseIssueCommand() cli.Command {
 				log.Fatal(err)
 			}
 
-			id, err := strconv.Atoi(c.Args()[0][1:])
+			id, err := strconv.Atoi(c.Args()[0])
 			if err != nil {
 				log.Fatal(err)
 			}
