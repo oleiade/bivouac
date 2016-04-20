@@ -125,7 +125,7 @@ func ShowIssueCommand() cli.Command {
 			fmt.Printf("%s\n\n", issue.Description)
 
 			for _, comment := range issue.Comments {
-				fmt.Printf("|\n\n")
+				fmt.Printf("\n\n")
 				fmt.Printf("Commented on %s\n-----\n%s\n\n", comment.CreatedAt.Format("Jan 2 2006 15:04"), comment.Body)
 			}
 		},
