@@ -24,7 +24,12 @@ func ListIssuesCommand() cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) {
-			store, err := GetOrCreateStore(".groundcontrol")
+			storePath, err := findBivouacFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			store, err := GetOrCreateStore(storePath)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -89,7 +94,12 @@ func ShowIssueCommand() cli.Command {
 				log.Fatal("Please provide the issue to comment id")
 			}
 
-			store, err := GetOrCreateStore(".groundcontrol")
+			storePath, err := findBivouacFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			store, err := GetOrCreateStore(storePath)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -143,7 +153,12 @@ func CreateIssueCommand() cli.Command {
 			var description string
 			var err error
 
-			store, err := GetOrCreateStore(".groundcontrol")
+			storePath, err := findBivouacFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			store, err := GetOrCreateStore(storePath)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -202,7 +217,12 @@ func CommentIssueCommand() cli.Command {
 				log.Fatal("Please provide the issue to comment id")
 			}
 
-			store, err := GetOrCreateStore(".groundcontrol")
+			storePath, err := findBivouacFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			store, err := GetOrCreateStore(storePath)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -260,7 +280,12 @@ func CloseIssueCommand() cli.Command {
 				log.Fatal("Please provide the issue to close")
 			}
 
-			store, err := GetOrCreateStore(".groundcontrol")
+			storePath, err := findBivouacFile()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			store, err := GetOrCreateStore(storePath)
 			if err != nil {
 				log.Fatal(err)
 			}
