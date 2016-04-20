@@ -188,6 +188,8 @@ func CreateIssueCommand() cli.Command {
 			)
 			store.AddIssue(*issue)
 			store.Write()
+
+			fmt.Println(issue.Id)
 		},
 	}
 }
