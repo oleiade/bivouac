@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/codegangsta/cli"
@@ -20,6 +21,10 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) {
+		err := ListIssuesCommand().Run(c)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	app.Run(os.Args)
