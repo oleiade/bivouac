@@ -5,11 +5,35 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"strconv"
 	"text/tabwriter"
 
 	"github.com/codegangsta/cli"
 )
+
+func InitCommand() cli.Command {
+	return cli.Command{
+		Name:    "init",
+		Aliases: []string{"i"},
+		Usage:   "creates an empty bivouac issue tracker",
+		Action: func(c *cli.Context) {
+			cwd, err := os.Getwd()
+			if err != nil {
+				log.Fatalf("fatal: unable to compute current working directory; reason: %v", err)
+			}
+
+			storePath := path.Join(cwd, bivouacFile)
+
+			_, err = GetOrCreateStore(storePath)
+			if err != nil {
+				log.Fatalf("fatal: unable to get or create Bivouac file; reason: %v", err)
+			}
+
+			fmt.Printf("Initialized empty Bivouac issue tracker: %s\n", storePath)
+		},
+	}
+}
 
 func ListIssuesCommand() cli.Command {
 	return cli.Command{
@@ -26,12 +50,17 @@ func ListIssuesCommand() cli.Command {
 		Action: func(c *cli.Context) {
 			storePath, err := findBivouacFile()
 			if err != nil {
-				log.Fatal(err)
+				log.Fatalf("fatal: No bivouac issue tracker found (nor in any of the parent directories): .bivouac")
 			}
 
 			store, err := GetOrCreateStore(storePath)
 			if err != nil {
 				log.Fatal(err)
+			}
+
+			ok := store.HasIssues()
+			if !ok {
+				log.Fatal("fatal: your issue tracker does not have any issues yet")
 			}
 
 			w := new(tabwriter.Writer)

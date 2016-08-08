@@ -13,6 +13,7 @@ func main() {
 	app.Usage = "make an explosive entrance"
 	app.Version = "0.1.0"
 	app.Commands = []cli.Command{
+		InitCommand(),
 		CreateIssueCommand(),
 		ListIssuesCommand(),
 		CommentIssueCommand(),

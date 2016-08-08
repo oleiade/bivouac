@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 )
 
@@ -60,8 +61,13 @@ func LoadStore(storePath string) (*Store, error) {
 }
 
 func GetOrCreateStore(storePath string) (*Store, error) {
-	if _, err := os.Stat(".groundcontrol"); os.IsNotExist(err) {
-		_, err := CreateNewStore(".groundcontrol")
+	cwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := os.Stat(path.Join(cwd, bivouacFile)); os.IsNotExist(err) {
+		_, err := CreateNewStore(bivouacFile)
 		if err != nil {
 			return nil, fmt.Errorf("Creating store file failed with error: %s", err.Error())
 		}
@@ -104,6 +110,10 @@ func (s *Store) FilterIssues(status IssueStatus) []*Issue {
 	}
 
 	return issues
+}
+
+func (s *Store) HasIssues() bool {
+	return len(s.Issues) > 0
 }
 
 func (s *Store) Write() error {
