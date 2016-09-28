@@ -4,8 +4,8 @@ import "time"
 
 // Comment represents a comment added to an issue
 type Comment struct {
-	CreatedAt time.Time
-	Body      string
+	CreatedAt time.Time `json:"created_at"`
+	Body      string    `json:"body"`
 }
 
 // NewComment creates a new comment instance
