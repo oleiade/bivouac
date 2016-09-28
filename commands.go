@@ -69,21 +69,21 @@ func ListIssuesCommand() cli.Command {
 			fmt.Fprintln(w, "status\tid\ttitle\topened on\tcomments")
 
 			if c.String("status") != "" {
-				issueStatus := ISSUE_OPENED
+				issueStatus := IssueOpen
 				if c.String("status") == "closed" {
-					issueStatus = ISSUE_CLOSED
+					issueStatus = IssueClosed
 				}
 
 				for _, issue := range store.FilterIssues(issueStatus) {
 					issueStatusString := "︎!"
-					if issue.Status == ISSUE_CLOSED {
+					if issue.Status == IssueClosed {
 						issueStatusString = "✓"
 					}
 
 					fmt.Fprintf(
 						w, "%s\t#%d\t%s\t%s\t%d\n",
 						issueStatusString,
-						issue.Id,
+						issue.ID,
 						issue.Title,
 						issue.CreatedAt.Format("Jan 2 2006"),
 						len(issue.Comments),
@@ -92,14 +92,14 @@ func ListIssuesCommand() cli.Command {
 			} else {
 				for _, issue := range store.ListIssues() {
 					issueStatusString := "︎!"
-					if issue.Status == ISSUE_CLOSED {
+					if issue.Status == IssueClosed {
 						issueStatusString = "✓"
 					}
 
 					fmt.Fprintf(
 						w, "%s\t#%d\t%s\t%s\t%d\n",
 						issueStatusString,
-						issue.Id,
+						issue.ID,
 						issue.Title,
 						issue.CreatedAt.Format("Jan 2 2006"),
 						len(issue.Comments),
@@ -144,12 +144,12 @@ func ShowIssueCommand() cli.Command {
 			}
 
 			issueStatus := "!"
-			if issue.Status == ISSUE_CLOSED {
+			if issue.Status == IssueClosed {
 				issueStatus = "✓"
 			}
 
 			fmt.Printf("%s %s\n", issueStatus, issue.Title)
-			fmt.Printf("#%d opened on %s\n", issue.Id, issue.CreatedAt.Format("Jan 2 2006 15:04"))
+			fmt.Printf("#%d opened on %s\n", issue.ID, issue.CreatedAt.Format("Jan 2 2006 15:04"))
 			fmt.Printf("-----\n")
 			fmt.Printf("%s\n\n", issue.Description)
 
@@ -218,7 +218,7 @@ func CreateIssueCommand() cli.Command {
 			store.AddIssue(*issue)
 			store.Write()
 
-			fmt.Println(issue.Id)
+			fmt.Println(issue.ID)
 		},
 	}
 }

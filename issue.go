@@ -2,15 +2,20 @@ package main
 
 import "time"
 
+// IssueStatus is a boolean representing a statuses state: open or closed
 type IssueStatus bool
 
 const (
-	ISSUE_OPENED IssueStatus = true
-	ISSUE_CLOSED             = false
+	// IssueOpen represents an issue open state
+	IssueOpen IssueStatus = true
+
+	// IssueClosed represents an issue closed state
+	IssueClosed = false
 )
 
+// Issue represents an issue
 type Issue struct {
-	Id          uint        `json:"id"`
+	ID          uint        `json:"id"`
 	Title       string      `json:"title"`
 	Description string      `json:"description"`
 	CreatedAt   time.Time   `json:"created_at"`
@@ -19,11 +24,13 @@ type Issue struct {
 	Status      IssueStatus `json:"status"`
 }
 
+// Close sets issue status to close and fulfills the ClosedAt attribute
 func (i *Issue) Close() {
-	i.Status = ISSUE_CLOSED
+	i.Status = IssueClosed
 	i.ClosedAt = time.Now()
 }
 
+// Comment adds a comment to the issue
 func (i *Issue) Comment(comment string) {
 	c := NewComment(
 		time.Now(),
@@ -33,12 +40,13 @@ func (i *Issue) Comment(comment string) {
 	i.Comments = append(i.Comments, *c)
 }
 
+// NewIssue creates a new issue object
 func NewIssue(id uint, title, description string) *Issue {
 	return &Issue{
-		Id:          id,
+		ID:          id,
 		Title:       title,
 		Description: description,
 		CreatedAt:   time.Now(),
-		Status:      ISSUE_OPENED,
+		Status:      IssueOpen,
 	}
 }

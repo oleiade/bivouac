@@ -82,7 +82,7 @@ func (s *Store) AddIssue(issue Issue) {
 
 func (s *Store) GetIssue(id uint) (*Issue, error) {
 	for _, issue := range s.Issues {
-		if issue.Id == id {
+		if issue.ID == id {
 			return issue, nil
 		}
 	}
