@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"text/tabwriter"
 	"time"
 
@@ -18,7 +19,17 @@ func initCommand() cli.Command {
 		Name:    "init",
 		Aliases: []string{"i"},
 		Usage:   "creates an empty bivouac issue tracker",
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:  "project-name",
+				Value: "",
+				Usage: "set the issue tracker's project name",
+			},
+		},
 		Action: func(c *cli.Context) {
+			var reader *bufio.Reader
+			var err error
+
 			cwd, err := os.Getwd()
 			if err != nil {
 				log.Fatalf("fatal: unable to compute current working directory; reason: %v", err)
@@ -26,9 +37,27 @@ func initCommand() cli.Command {
 
 			storePath := path.Join(cwd, bivouacFile)
 
-			_, err = GetOrCreateStore(storePath)
+			s, err := GetOrCreateStore(storePath)
 			if err != nil {
 				log.Fatalf("fatal: unable to get or create Bivouac file; reason: %v", err)
+			}
+
+			if c.String("project-name") == "" {
+				var projectName string
+				reader = bufio.NewReader(os.Stdin)
+				fmt.Print("Project name: ")
+				projectName, err = reader.ReadString('\n')
+				if err != nil {
+					log.Fatal(err)
+				}
+				s.ProjectName = strings.Trim(projectName, "\n")
+			} else {
+				s.ProjectName = c.String("project-name")
+			}
+
+			err = s.Write()
+			if err != nil {
+				log.Fatalf("unable to sync store to disk; reason %v", err)
 			}
 
 			fmt.Printf("Initialized empty Bivouac issue tracker: %s\n", storePath)

@@ -12,8 +12,9 @@ import (
 // Store represents a bivouac issue tracker store.
 // It contains the tracker's issues
 type Store struct {
-	Issues []*Issue `json:"issues"`
-	Path   string   `json:"-"`
+	ProjectName string   `json:"project_name"`
+	Issues      []*Issue `json:"issues"`
+	Path        string   `json:"-"`
 
 	NextID uint `json:"nextid"`
 }
