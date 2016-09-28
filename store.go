@@ -15,8 +15,6 @@ type Store struct {
 	ProjectName string   `json:"project_name"`
 	Issues      []*Issue `json:"issues"`
 	Path        string   `json:"-"`
-
-	NextID uint `json:"nextid"`
 }
 
 // CreateNewStore instanciates a new store, and write it
@@ -145,9 +143,15 @@ func (s *Store) Write() error {
 }
 
 func (s *Store) getNextID() uint {
-	nextID := s.NextID
-	s.NextID++
-	return nextID
+	var maxID uint
+
+	for _, v := range s.Issues {
+		if v.ID > maxID {
+			maxID = v.ID
+		}
+	}
+
+	return maxID + 1
 }
 
 // NewStore creates a new Store instance
@@ -155,6 +159,5 @@ func NewStore(path string, issues []*Issue) *Store {
 	return &Store{
 		Issues: issues,
 		Path:   path,
-		NextID: 0,
 	}
 }
