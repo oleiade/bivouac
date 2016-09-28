@@ -33,7 +33,7 @@ func (i *Issue) Close() {
 // Comment adds a comment to the issue
 func (i *Issue) Comment(comment string) {
 	c := NewComment(
-		time.Now(),
+		time.Now().Unix(),
 		comment,
 	)
 
