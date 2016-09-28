@@ -8,6 +8,7 @@ import (
 	"path"
 	"strconv"
 	"text/tabwriter"
+	"time"
 
 	"github.com/codegangsta/cli"
 )
@@ -85,7 +86,7 @@ func ListIssuesCommand() cli.Command {
 						issueStatusString,
 						issue.ID,
 						issue.Title,
-						issue.CreatedAt.Format("Jan 2 2006"),
+						time.Unix(issue.CreatedAt, 0).Format("Jan 2 2006"),
 						len(issue.Comments),
 					)
 				}
@@ -101,7 +102,7 @@ func ListIssuesCommand() cli.Command {
 						issueStatusString,
 						issue.ID,
 						issue.Title,
-						issue.CreatedAt.Format("Jan 2 2006"),
+						time.Unix(issue.CreatedAt, 0).Format("Jan 2 2006"),
 						len(issue.Comments),
 					)
 				}
@@ -149,7 +150,7 @@ func ShowIssueCommand() cli.Command {
 			}
 
 			fmt.Printf("%s %s\n", issueStatus, issue.Title)
-			fmt.Printf("#%d opened on %s\n", issue.ID, issue.CreatedAt.Format("Jan 2 2006 15:04"))
+			fmt.Printf("#%d opened on %s\n", issue.ID, time.Unix(issue.CreatedAt, 0).Format("Jan 2 2006 15:04"))
 			fmt.Printf("-----\n")
 			fmt.Printf("%s\n\n", issue.Description)
 

@@ -18,8 +18,8 @@ type Issue struct {
 	ID          uint        `json:"id"`
 	Title       string      `json:"title"`
 	Description string      `json:"description"`
-	CreatedAt   time.Time   `json:"created_at"`
-	ClosedAt    time.Time   `json:"closed_at"`
+	CreatedAt   int64       `json:"created_at"`
+	ClosedAt    int64       `json:"closed_at"`
 	Comments    []Comment   `json:"comments"`
 	Status      IssueStatus `json:"status"`
 }
@@ -27,7 +27,7 @@ type Issue struct {
 // Close sets issue status to close and fulfills the ClosedAt attribute
 func (i *Issue) Close() {
 	i.Status = IssueClosed
-	i.ClosedAt = time.Now()
+	i.ClosedAt = time.Now().Unix()
 }
 
 // Comment adds a comment to the issue
@@ -46,7 +46,7 @@ func NewIssue(id uint, title, description string) *Issue {
 		ID:          id,
 		Title:       title,
 		Description: description,
-		CreatedAt:   time.Now(),
+		CreatedAt:   time.Now().Unix(),
 		Status:      IssueOpen,
 	}
 }
