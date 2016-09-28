@@ -13,16 +13,16 @@ func main() {
 	app.Usage = "make an explosive entrance"
 	app.Version = "0.1.0"
 	app.Commands = []cli.Command{
-		InitCommand(),
-		CreateIssueCommand(),
-		ListIssuesCommand(),
-		CommentIssueCommand(),
-		ShowIssueCommand(),
-		CloseIssueCommand(),
+		initCommand(),
+		createIssueCommand(),
+		listIssuesCommand(),
+		commentIssueCommand(),
+		showIssueCommand(),
+		closeIssueCommand(),
 	}
 
 	app.Action = func(c *cli.Context) {
-		err := ListIssuesCommand().Run(c)
+		err := listIssuesCommand().Run(c)
 		if err != nil {
 			log.Fatal(err)
 		}

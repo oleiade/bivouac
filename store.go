@@ -9,15 +9,19 @@ import (
 	"path/filepath"
 )
 
+// Store represents a bivouac issue tracker store.
+// It contains the tracker's issues
 type Store struct {
 	Issues []*Issue `json:"issues"`
 	Path   string   `json:"-"`
 
-	NextId uint `json:"nextid"`
+	NextID uint `json:"nextid"`
 }
 
+// CreateNewStore instanciates a new store, and write it
+// to disk
 func CreateNewStore(storePath string) (*Store, error) {
-	var store *Store = &Store{}
+	store := &Store{}
 
 	jsonData, err := json.Marshal(store)
 	if err != nil {
@@ -37,6 +41,8 @@ func CreateNewStore(storePath string) (*Store, error) {
 	return store, nil
 }
 
+// LoadStore reads a store content from file and returns
+// an instancie of store
 func LoadStore(storePath string) (*Store, error) {
 	var store *Store
 	var storeContent []byte
@@ -60,6 +66,8 @@ func LoadStore(storePath string) (*Store, error) {
 	return store, nil
 }
 
+// GetOrCreateStore will try to load a store at provided path.
+// If it does not exist, it will create it and load it.
 func GetOrCreateStore(storePath string) (*Store, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -76,10 +84,12 @@ func GetOrCreateStore(storePath string) (*Store, error) {
 	return LoadStore(storePath)
 }
 
+// AddIssue adds an issue to the store
 func (s *Store) AddIssue(issue Issue) {
 	s.Issues = append(s.Issues, &issue)
 }
 
+// GetIssue retrieves issue with the provided id in the store
 func (s *Store) GetIssue(id uint) (*Issue, error) {
 	for _, issue := range s.Issues {
 		if issue.ID == id {
@@ -90,6 +100,7 @@ func (s *Store) GetIssue(id uint) (*Issue, error) {
 	return nil, fmt.Errorf("no issue with id %d", id)
 }
 
+// ListIssues returns a list of the issues in store
 func (s *Store) ListIssues() []*Issue {
 	var issues []*Issue
 
@@ -100,6 +111,7 @@ func (s *Store) ListIssues() []*Issue {
 	return issues
 }
 
+// FilterIssues lets you retrieve store issues with the provided status
 func (s *Store) FilterIssues(status IssueStatus) []*Issue {
 	var issues []*Issue
 
@@ -112,6 +124,7 @@ func (s *Store) FilterIssues(status IssueStatus) []*Issue {
 	return issues
 }
 
+// HasIssues indicates if the store contains issues at all
 func (s *Store) HasIssues() bool {
 	return len(s.Issues) > 0
 }
@@ -130,16 +143,17 @@ func (s *Store) Write() error {
 	return nil
 }
 
-func (s *Store) getNextId() uint {
-	nextId := s.NextId
-	s.NextId += 1
-	return nextId
+func (s *Store) getNextID() uint {
+	nextID := s.NextID
+	s.NextID++
+	return nextID
 }
 
+// NewStore creates a new Store instance
 func NewStore(path string, issues []*Issue) *Store {
 	return &Store{
 		Issues: issues,
 		Path:   path,
-		NextId: 0,
+		NextID: 0,
 	}
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-func InitCommand() cli.Command {
+func initCommand() cli.Command {
 	return cli.Command{
 		Name:    "init",
 		Aliases: []string{"i"},
@@ -36,7 +36,7 @@ func InitCommand() cli.Command {
 	}
 }
 
-func ListIssuesCommand() cli.Command {
+func listIssuesCommand() cli.Command {
 	return cli.Command{
 		Name:    "list",
 		Aliases: []string{"l"},
@@ -112,7 +112,7 @@ func ListIssuesCommand() cli.Command {
 	}
 }
 
-func ShowIssueCommand() cli.Command {
+func showIssueCommand() cli.Command {
 	return cli.Command{
 		Name:    "show",
 		Aliases: []string{"s"},
@@ -162,7 +162,7 @@ func ShowIssueCommand() cli.Command {
 	}
 }
 
-func CreateIssueCommand() cli.Command {
+func createIssueCommand() cli.Command {
 	return cli.Command{
 		Name:    "add",
 		Aliases: []string{"c"},
@@ -212,7 +212,7 @@ func CreateIssueCommand() cli.Command {
 			}
 
 			issue := NewIssue(
-				store.getNextId(),
+				store.getNextID(),
 				title,
 				description,
 			)
@@ -224,7 +224,7 @@ func CreateIssueCommand() cli.Command {
 	}
 }
 
-func CommentIssueCommand() cli.Command {
+func commentIssueCommand() cli.Command {
 	return cli.Command{
 		Name:    "comment",
 		Aliases: []string{},
@@ -292,7 +292,7 @@ func CommentIssueCommand() cli.Command {
 	}
 }
 
-func CloseIssueCommand() cli.Command {
+func closeIssueCommand() cli.Command {
 	return cli.Command{
 		Name:    "close",
 		Aliases: []string{},

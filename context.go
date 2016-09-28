@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-var bivouacFile string = ".bivouac"
+var bivouacFile = ".bivouac"
 
 func findBivouacFile() (string, error) {
 	pwd, err := os.Getwd()
@@ -14,7 +14,7 @@ func findBivouacFile() (string, error) {
 		return "", err
 	}
 
-	var evaluatedPath string = pwd
+	evaluatedPath := pwd
 
 	for {
 		if evaluatedPath == "/" {
