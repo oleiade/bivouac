@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/codegangsta/cli"
+   "github.com/kataras/iris"
 )
 
 func initCommand() cli.Command {
@@ -369,4 +370,33 @@ func closeIssueCommand() cli.Command {
 			store.Write()
 		},
 	}
+}
+
+func serveCommand() cli.Command {
+	return cli.Command{
+		Name:    "serve",
+		Aliases: []string{},
+		Usage:   "start an issue server",
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:  "transport",
+				Value: ":8080",
+				Usage: "set the server transport",
+			},
+		},
+		Action: func(c *cli.Context) {
+			// handle websocket connections
+			iris.Config.Websocket.Endpoint = "/bivouac"
+
+			iris.Websocket.OnConnection(func(c iris.WebsocketConnection){
+				c.Join("bivouac")
+
+				c.OnMessage(func(message []byte){
+					fmt.Printf("%s request received\n", string(message))
+				})
+			})
+			// serve requests at http://localhost:8080
+			iris.Listen(":8080")
+		},
+}
 }

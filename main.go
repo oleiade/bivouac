@@ -19,6 +19,7 @@ func main() {
 		commentIssueCommand(),
 		showIssueCommand(),
 		closeIssueCommand(),
+		serveCommand(),
 	}
 
 	app.Action = func(c *cli.Context) {
