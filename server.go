@@ -29,18 +29,28 @@ const (
 
 	// InvalidRequest error type
 	InvalidRequest = 2
+
+	// InternalError error type
+	InternalError = 3
 )
 
 // Request represents a request
 type Request struct {
 	Action Verb              `json:"action"`
-	Args   map[string]string `json:"args"`
+	Args   map[string]string `json:"args,omitempty"`
 }
 
 // Response represents a request
 type Response struct {
-	Status int               `json:"status"`
-	Data   map[string]string `json:"data"`
+	Status int    `json:"status"`
+	Data 	[]byte 	`json:"data"`
+}
+
+// FetchResponse represents the reponse emitted
+// when a fetch request has been submitted
+type FetchResponse struct {
+	Status int `json:"status"`
+	Store Store `json:"store"`
 }
 
 // Error represents an error
@@ -52,28 +62,44 @@ type Error struct {
 // handleRequest
 func handleRequest(message []byte) []byte {
 	var request Request
+	var payload []byte
 	var err error
 
 	err = json.Unmarshal(message, &request)
 	if err != nil {
-		message, _ := json.Marshal(NewError(InvalidRequest, "unable to deserialize provided json data"))
-		return message
+		payload, _ = json.Marshal(NewError(InvalidRequest, "unable to deserialize provided json data"))
+		return payload
 	}
 
 	switch request.Action {
 	case Fetch:
-		response := NewResponse(Success, make(map[string]string))
-		break
+		response, err := fetch()
+		if err != nil {
+			errBytes, _ := json.Marshal(NewError(InternalError, err.Error()))
+			return errBytes
+		}
+
+		responseBytes, _ := json.Marshal(response)
+		return responseBytes
 	case Push:
 		break
 	}
 
-	return NewResponse(Success, make(map[string]string))
+	return payload
 }
 
-func fetch() *Response {
+func fetch() (*FetchResponse, error) {
+	storePath, err := findBivouacFile()
+	if err != nil {
+			return nil, err
+	}
 
-	return NewResponse(Success)
+	store, err := LoadStore(storePath)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewFetchResponse(Success, *store), nil
 }
 
 // NewRequest instanciates a new Request with provided action and args
@@ -85,10 +111,18 @@ func NewRequest(action Verb, args map[string]string) *Request {
 }
 
 // NewResponse instanciates a new Response with provided status and data
-func NewResponse(status int, data map[string]string) *Response {
+func NewResponse(status int, data []byte) *Response {
 	return &Response{
 		Status: status,
 		Data:   data,
+	}
+}
+
+// NewFetchResponse instanciates a new FetchResponse
+func NewFetchResponse(status int, store Store) *FetchResponse {
+	return &FetchResponse{
+		Status: status,
+		Store: store,
 	}
 }
 

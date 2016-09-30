@@ -392,7 +392,9 @@ func serveCommand() cli.Command {
 				c.Join("bivouac")
 
 				c.OnMessage(func(message []byte){
-					fmt.Printf("%s request received\n", string(message))
+					fmt.Println(message)
+					response := handleRequest(message)
+					c.EmitMessage(response)
 				})
 			})
 			// serve requests at http://localhost:8080
