@@ -387,8 +387,11 @@ func serveCommand() cli.Command {
 		Action: func(c *cli.Context) {
 
 			iris.Get("/", getDocument)
+
 			iris.Get("/issues", getIssues)
-			iris.Get("/issues/:id", getIssue)
+			iris.Get("/issues/:issue_id", getIssue)
+
+			iris.Get("/issues/:issue_id/comments", getComments)
 
 			// serve requests at http://localhost:8080
 			iris.Listen(":8080")
