@@ -68,6 +68,32 @@ func getIssue(ctx *iris.Context) {
 	ctx.JSON(iris.StatusOK, issue)
 }
 
+func addIssue(ctx *iris.Context) {
+	issue := new(Issue)
+	if err := ctx.ReadJSON(issue); err != nil {
+		ctx.EmitError(iris.StatusInternalServerError)
+		return
+	}
+
+	storePath, err := findBivouacFile()
+	if err != nil {
+		ctx.EmitError(iris.StatusInternalServerError)
+		return
+	}
+
+	store, err := LoadStore(storePath)
+	if err != nil {
+		ctx.EmitError(iris.StatusInternalServerError)
+		return
+	}
+
+	issue.ID = store.getNextID()
+	store.AddIssue(*issue)
+	store.Write()
+
+	ctx.JSON(iris.StatusCreated, *issue)
+}
+
 func getComments(ctx *iris.Context) {
 	storePath, err := findBivouacFile()
 	if err != nil {

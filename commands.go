@@ -390,6 +390,7 @@ func serveCommand() cli.Command {
 
 			iris.Get("/issues", getIssues)
 			iris.Get("/issues/:issue_id", getIssue)
+			iris.Post("/issues", addIssue)
 
 			iris.Get("/issues/:issue_id/comments", getComments)
 
