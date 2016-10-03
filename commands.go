@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/codegangsta/cli"
-   "github.com/kataras/iris"
+	"github.com/kataras/iris"
 )
 
 func initCommand() cli.Command {
@@ -385,20 +385,13 @@ func serveCommand() cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) {
-			// handle websocket connections
-			iris.Config.Websocket.Endpoint = "/bivouac"
 
-			iris.Websocket.OnConnection(func(c iris.WebsocketConnection){
-				c.Join("bivouac")
+			iris.Get("/", getDocument)
+			iris.Get("/issues", getIssues)
+			iris.Get("/issues/:id", getIssue)
 
-				c.OnMessage(func(message []byte){
-					fmt.Println(message)
-					response := handleRequest(message)
-					c.EmitMessage(response)
-				})
-			})
 			// serve requests at http://localhost:8080
 			iris.Listen(":8080")
 		},
-}
+	}
 }
