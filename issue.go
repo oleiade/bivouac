@@ -47,6 +47,8 @@ func NewIssue(id uint, title, description string) *Issue {
 		Title:       title,
 		Description: description,
 		CreatedAt:   time.Now().Unix(),
+		ClosedAt:    0,
+		Comments:    make([]Comment, 0),
 		Status:      IssueOpen,
 	}
 }
