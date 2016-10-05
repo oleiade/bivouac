@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/kataras/iris"
@@ -71,6 +72,7 @@ func getIssue(ctx *iris.Context) {
 func addIssue(ctx *iris.Context) {
 	issue := new(Issue)
 	if err := ctx.ReadJSON(issue); err != nil {
+		fmt.Println(string(ctx.PostBody()))
 		ctx.EmitError(iris.StatusInternalServerError)
 		return
 	}

@@ -15,7 +15,7 @@ const (
 
 // Issue represents an issue
 type Issue struct {
-	ID          uint        `json:"id"`
+	ID          uint        `json:"id,omitempty"`
 	Title       string      `json:"title"`
 	Description string      `json:"description"`
 	CreatedAt   int64       `json:"created_at"`
